@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,4 +29,16 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::post('/login', function (Request $request) {
+    $credentials = $request->only('email', 'password');
+
+    if (! $token = auth()->attempt($credentials)) {
+        return response()->json(['error' => 'Unauthorized'], 401);
+    }
+
+    return $this->respondWithToken($token);
+});
+
 require __DIR__.'/auth.php';
+
+
